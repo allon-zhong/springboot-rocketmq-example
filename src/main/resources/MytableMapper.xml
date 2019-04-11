@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="rocketmq_example.mqandmysqltraction.IMytableMapper">
+
+
+	<insert id="batchinsertmytable" parameterType="java.util.List">
+		INSERT INTO
+		mqtest.ordertest(column1,column2,column3,column4,column5)VALUES
+		<foreach collection="list" item="listrestlt" separator=",">
+			(#{listrestlt.column1,jdbcType=NVARCHAR},
+			#{listrestlt.column2,jdbcType=NVARCHAR},
+			#{listrestlt.column3,jdbcType=NVARCHAR},
+			#{listrestlt.column4,jdbcType=NVARCHAR},
+			#{listrestlt.column5,jdbcType=NVARCHAR})
+		</foreach>
+	</insert>
+
+
+	<select id="selectMyTableModelById" resultType="rocketmq_example.mqandmysqltraction.MyTableModel">
+		select id from mqtest.ordertest where id=#{id}
+	</select>
+
+
+	<insert id="insertmytable" parameterType="rocketmq_example.mqandmysqltraction.MyTableModel" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO mqtest.ordertest(column1,column2,column3,column4,column5) VALUES 
+		(#{column1,jdbcType=NVARCHAR},
+		#{column2,jdbcType=NVARCHAR},
+		#{column3,jdbcType=NVARCHAR},
+		#{column4,jdbcType=NVARCHAR},
+		#{column5,jdbcType=NVARCHAR})
+	</insert>
+
+</mapper>
