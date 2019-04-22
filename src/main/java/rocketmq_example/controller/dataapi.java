@@ -72,10 +72,10 @@ public class dataapi {
 	
 	//------------------------------------------------------------------------------------------------------------
 	
-	@PostMapping("/insertbatch1")
-	public void insertmytable(@RequestBody List<MyTableModel> mytablemodels) throws JsonProcessingException, UnsupportedEncodingException, MQClientException{
-		mytableService.execMytableinsert(mytablemodels);
-	}
+//	@PostMapping("/insertbatch1")
+//	public void insertmytable(@RequestBody List<MyTableModel> mytablemodels) throws JsonProcessingException, UnsupportedEncodingException, MQClientException{
+//		mytableService.execMytableinsert(mytablemodels);
+//	}
 
 	@GetMapping("/selectbyid")
 	public boolean insertmytable(@RequestParam("id") Integer id) {
@@ -83,7 +83,15 @@ public class dataapi {
 	}
 	
 	//------------------------------------------------------------------------------------------------------------
-	@PostMapping("/insertbatch2")
+	/**
+	 * 我的例子
+	 * @param mytablemodels
+	 * @return
+	 * @throws JsonProcessingException
+	 * @throws UnsupportedEncodingException
+	 * @throws MQClientException
+	 */
+	@PostMapping("/insertbatch1")
 	public TransactionSendResult batchinsertmytable2(@RequestBody List<MyTableModel> mytablemodels) throws JsonProcessingException, UnsupportedEncodingException, MQClientException {
 		
 		String objstr=objMapper.writeValueAsString(mytablemodels);
@@ -100,6 +108,7 @@ public class dataapi {
 		//me.setTransactionId(encodeStr);
 		// 内容
 		me.setBody(objstr.getBytes(RemotingHelper.DEFAULT_CHARSET));
+		
 		
 		TransactionSendResult tsr=mqProducer.producer.sendMessageInTransaction(me, mytablemodels);
 		

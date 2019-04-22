@@ -20,7 +20,11 @@ public class Consumer {
 
 		consumer.setNamesrvAddr("10.10.6.71:9876;10.10.6.72:9876");
 		consumer.setConsumeThreadMax(30);
+		consumer.setConsumeThreadMin(5);
 		consumer.setConsumeMessageBatchMaxSize(32);
+		consumer.setMaxReconsumeTimes(16);
+		consumer.setConsumeConcurrentlyMaxSpan(2000);
+		consumer.setPullInterval(0);
         /*
          * Specify name server addresses.
          * <p/>

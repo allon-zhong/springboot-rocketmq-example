@@ -3,7 +3,6 @@ package rocketmq_example.mqandmysqltraction;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.TransactionSendResult;
@@ -65,12 +64,14 @@ public class MytableService {
 
 	
 	/**
-	 * 这里可以显示提交事物 返回boolean
+	 *  这里可以显示提交事物 返回boolean
 	 * 一条一条插入只是为了展现事物的特性
+	 * 获取所有异常
+	 * 
 	 * @param mytablemodels
 	 * @return
 	 */
-	@Transactional
+	@Transactional(rollbackFor=Exception.class,timeout=60000)
 	public List<Integer> execMytableinsert2(List<MyTableModel> mytablemodels) {
 		
 		logger.info("开始执行数据库事物");
