@@ -1,0 +1,70 @@
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
+hystrix.threadpool.default.coreSize: 100
+
+
+hystrix.stream.queue.sendRate: 5000
+hystrix.stream.queue.gatherRate: 5000
+hystrix.stream.queue.enabled: false
+metrics.stream.queue.enabled: false
+spring: 
+  application:
+    name: spring-cloud-server1-test
+  rabbitmq:
+    host: 10.10.6.79
+    port: 5672
+    username: admin
+    password: admin
+  sleuth:
+    enabled: true
+    sampler: 
+      percentage: 0.01
+  cloud:
+    config: 
+      discovery:
+        enabled: true
+        service-id: SPRING-CLOUD-CONFIG
+      fail-fast: true
+      label: master
+encrypt:
+  failOnError: false
+server:
+  port: 8078
+  
+eureka:
+  instance:
+    appname: rocketmq-example
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://10.10.6.93:8761/eureka/
+    eureka-server-total-connections-per-host: 500
+endpoints:
+  refresh:
+    sensitive: false
+  metrics:
+    sensitive: false
+  dump:
+    sensitive: false
+  auditevents:
+    sensitive: false
+  features:
+    sensitive: false
+  mappings:
+    sensitive: false
+  trace:
+    sensitive: false
+  autoconfig:
+    sensitive: false
+  loggers:
+    sensitive: false
+  jolokia:
+    enabled: true
+    sensitive: false
+  beans:
+    sensitive: false
+security: 
+  basic:
+    enabled: false
+  user:
+    name: test
+    password: test
