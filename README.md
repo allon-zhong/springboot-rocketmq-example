@@ -5,5 +5,7 @@
 
 事物消息是和数据库（mysql）结合使用。和原有的设计有所不同
 
-ppt请访问一下地址
+ppt请访问以下地址
+
 https://mp.weixin.qq.com/s/jifn72WM6si4LYuJS0cDHw
+
