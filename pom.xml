@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>com.zjs.mic</groupId>
 		<artifactId>zjs-spring-cloud-dependencies</artifactId>
-		<version>0.0.3</version>
+		<version>1.0.0</version>
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
