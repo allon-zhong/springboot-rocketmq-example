@@ -1,7 +1,6 @@
-package rocketmq_example.mqandmysqltraction.mq;
+package rocketmq_example.mqandmysqltraction.producer;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.rocketmq.client.producer.LocalTransactionState;
 import org.apache.rocketmq.client.producer.TransactionListener;
@@ -25,67 +24,59 @@ import rocketmq_example.mqandmysqltraction.MytableService;
  *
  */
 @Component
-public class TransactionListenerImpl1 implements TransactionListener {
+public class TransactionListenerImpl implements TransactionListener {
 
-	static Logger logger = LoggerFactory.getLogger(TransactionListenerImpl1.class);
+	static Logger logger = LoggerFactory.getLogger(TransactionListenerImpl.class);
 
-	// 记录数据库执行状态，防止MQ commit message的时候断网等情况。
-	//如果提交事物状态为COMMIT_MESSAGE broker没有收到 正好本服务也死掉了 或重启了 也会丢失 提交信息
-	private ConcurrentHashMap<String, LocalTransactionState> countHashMap = new ConcurrentHashMap<>();
 
 	@Autowired
 	MytableService mytableService;
 
 	/**
-	 * 一定要设置执行sql时间，以免超时
+	 * 一定要设置执行sql时间，尽量不要超时
 	 * 
 	 */
 	@Override
 	public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {
-		logger.info(msg.toString());
+		logger.info("开始执行本地数据库事物  transactionid:{}", msg.getTransactionId());
 
 		LocalTransactionState lts = LocalTransactionState.UNKNOW;
 
 		@SuppressWarnings("unchecked")
 		List<MyTableModel> mytablelist = (List<MyTableModel>) arg;
 
-		countHashMap.put(msg.getTransactionId(), lts);
-
 		try {
-			mytableService.execMytableinsert2(mytablelist);
+			//数据库事物执行时间不要超过mq回查时间 默认15分钟
+			mytableService.execMytableinsert2(mytablelist, msg.getTransactionId());
 			lts = LocalTransactionState.COMMIT_MESSAGE;
 		} catch (Exception e) {
 			logger.error("数据库事务异常", e);
 			lts = LocalTransactionState.ROLLBACK_MESSAGE;
 		}
 
-		// 如果事物不报异常 就直接返回LocalTransactionState.COMMIT_MESSAGE
+		logger.info("结束执行本地数据库事物  transactionid:{} 返回:{}", msg.getTransactionId(),lts);
 
-		// 否则回滚事物
-
-		// 超时处理
-
-		// 这个方法和发送是同步处理，先发送half消息然后在执行事物，如果超时会报异常
-		
 		return lts;
 
 	}
 
 	/**
-	 * 插入数据异步的时候这里 就要做逻辑处理，保存当前状态进行回滚或提交处理
+	 * 去数据库查询看看是否存在已经成功发送预提交数据而没有commit成功的mq信息
+	 * 每分钟1次默认15次
 	 * 
+	 * 这里可以做个计数 让MQ重试5次/5分钟就回滚减轻MQ回查的压力
 	 * 
 	 */
 	@Override
 	public LocalTransactionState checkLocalTransaction(MessageExt msg) {
-
-		LocalTransactionState ltscheck = countHashMap.get(msg.getTransactionId());
-		if (null != ltscheck) {
-			countHashMap.remove(msg.getTransactionId());
+		if (mytableService.existMyTableModelByMsgid(msg.getTransactionId())) {
+			logger.info("查询到已提交事物 transactionid:{}",msg.getTransactionId());
+			return LocalTransactionState.COMMIT_MESSAGE;
 		} else {
+			logger.info("未查到已提交事物 transactionid:{}",msg.getTransactionId());
 			return LocalTransactionState.UNKNOW;
 		}
-		return countHashMap.get(msg.getTransactionId());
+
 	}
 
 }

@@ -15,15 +15,15 @@ spring:
     username: admin
     password: admin
   sleuth:
-    enabled: true
+    enabled: false
     sampler: 
       percentage: 0.01
   cloud:
     config: 
       discovery:
-        enabled: true
+        enabled: false
         service-id: SPRING-CLOUD-CONFIG
-      fail-fast: true
+      fail-fast: false
       label: master
 encrypt:
   failOnError: false
@@ -37,6 +37,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://10.10.6.93:8761/eureka/
+      #defaultZone: http://zjs:zjsmicro@10.10.131.64:8761/eureka/,http://zjs:zjsmicro@10.10.131.65:8761/eureka/,http://zjs:zjsmicro@10.10.131.66:8761/eureka/
     eureka-server-total-connections-per-host: 500
 endpoints:
   refresh:

@@ -13,17 +13,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import rocketmq_example.mqandmysqltraction.mq.MqProducer;
+import rocketmq_example.mqandmysqltraction.producer.TransactionProducer;
 
 
-@Component
+//@Component
 public class MultithreadSendMQ {
 
 	static Logger logger = LoggerFactory.getLogger(MultithreadSendMQ.class);
 	
 	
 	@Bean
-	public String sendmq(MqProducer mqProducer){
+	public String sendmq(TransactionProducer mqProducer){
 		ExecutorService executorService = new ThreadPoolExecutor(50, 50, 100, TimeUnit.SECONDS,
 				new ArrayBlockingQueue<Runnable>(2000), new ThreadFactory() {
 					@Override

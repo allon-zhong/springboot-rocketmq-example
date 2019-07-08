@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.zjs.mic.other.EnableZjsAllAnnotation;
 
@@ -16,7 +15,6 @@ import com.zjs.mic.other.EnableZjsAllAnnotation;
  *
  */
 @MapperScan("rocketmq_example.mqandmysqltraction")
-@EnableTransactionManagement 
 @EnableZjsAllAnnotation
 @EnableHystrix
 @SpringBootApplication
@@ -27,9 +25,5 @@ public class App {
 		SpringApplication.run(App.class, args);
 	}
 	
-	/*@Bean
-    public Object testBean(PlatformTransactionManager platformTransactionManager){
-		logger.info("-----------------" + platformTransactionManager.getClass().getName());
-        return new Object();
-    }*/
+	
 }
