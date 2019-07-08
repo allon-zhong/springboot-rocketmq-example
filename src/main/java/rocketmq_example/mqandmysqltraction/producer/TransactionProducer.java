@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 
 
-//@Component
+@Component
 public class TransactionProducer {
 	static Logger logger = LoggerFactory.getLogger(TransactionProducer.class);
 

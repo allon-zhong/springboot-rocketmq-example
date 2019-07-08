@@ -33,7 +33,7 @@ public class dataapi {
 	@Autowired
 	IMytableMapper mytable;
 	
-	//@Autowired
+	@Autowired
 	TransactionProducer mqProducer;
 	
 	/**
@@ -65,7 +65,7 @@ public class dataapi {
 	 * @throws UnsupportedEncodingException
 	 * @throws MQClientException
 	 */
-	//@PostMapping("/insertbatch1")
+	@PostMapping("/insertbatch1")
 	public TransactionSendResult batchinsertmytable2(@RequestBody List<MyTableModel> mytablemodels) throws JsonProcessingException, UnsupportedEncodingException, MQClientException {
 		
 		byte[] body=objMapper.writeValueAsBytes(mytablemodels);
