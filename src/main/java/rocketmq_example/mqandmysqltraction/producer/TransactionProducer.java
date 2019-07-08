@@ -1,4 +1,4 @@
-package rocketmq_example.mqandmysqltraction.mq;
+package rocketmq_example.mqandmysqltraction.producer;
 
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -24,15 +24,15 @@ import org.springframework.stereotype.Component;
 
 
 
-@Component
-public class MqProducer {
-	static Logger logger = LoggerFactory.getLogger(MqProducer.class);
+//@Component
+public class TransactionProducer {
+	static Logger logger = LoggerFactory.getLogger(TransactionProducer.class);
 
 	public DefaultMQProducer producer = null;
 	
 	
 	@Autowired
-	TransactionListener transactionListenerImpl;
+	TransactionListener transactionListenerImp;
 
 	@PostConstruct
 	private void init() throws MQClientException {
@@ -45,11 +45,11 @@ public class MqProducer {
 		//transactionProducer.setProducerGroup("mytestgroup");
 		// Name Server 地址列表
 		transactionProducer.setNamesrvAddr("10.10.6.71:9876;10.10.6.72:9876");
-		// 超时时间
-		transactionProducer.setSendMsgTimeout(30000);
+		// 超时时间  这里一定要大于数据库事物执行的超时时间
+		transactionProducer.setSendMsgTimeout(90000);
 		
 		//这个线程池作用就是  mqbroker端回调信息的本地处理线程池
-		ExecutorService executorService = new ThreadPoolExecutor(2, 5, 100, TimeUnit.SECONDS,
+		ExecutorService executorService = new ThreadPoolExecutor(1, 5, 100, TimeUnit.SECONDS,
 				new ArrayBlockingQueue<Runnable>(2000), new ThreadFactory() {
 					@Override
 					public Thread newThread(Runnable r) {
@@ -62,7 +62,8 @@ public class MqProducer {
 		
 		transactionProducer.setExecutorService(executorService);
 
-		transactionProducer.setTransactionListener(transactionListenerImpl);
+		transactionProducer.setTransactionListener(transactionListenerImp);
+		
 		
 		producer = transactionProducer;
 		

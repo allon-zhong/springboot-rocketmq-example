@@ -11,4 +11,12 @@ public interface IMytableMapper {
 	public int insertmytable(MyTableModel mytablemodel); 
 
 	public MyTableModel selectMyTableModelById(int id);
+	
+	
+	public int selectMyTableModelByMsgid(String msgid);
+	
+
+	public int insertmsgrecord(MyTableModel mytablemodel); 
+	
+	
 }

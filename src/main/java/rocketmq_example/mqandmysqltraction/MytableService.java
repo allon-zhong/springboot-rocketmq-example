@@ -1,23 +1,15 @@
 package rocketmq_example.mqandmysqltraction;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.TransactionSendResult;
-import org.apache.rocketmq.common.message.Message;
-import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import rocketmq_example.mqandmysqltraction.mq.MqProducer;
 
 @Service
 public class MytableService {
@@ -27,62 +19,27 @@ public class MytableService {
 	IMytableMapper mytable;
 
 	@Autowired
-	MqProducer mqProducer;
-
-	@Autowired
 	ObjectMapper objMapper;
 
-	@Transactional
-	public void execMytableinsert(List<MyTableModel> mytablemodels)
-			throws JsonProcessingException, UnsupportedEncodingException, MQClientException {
-		for (MyTableModel myTableModel : mytablemodels) {
-			// 插入数据库
-			mytable.insertmytable(myTableModel);
-
-			logger.info("-----------------------" + myTableModel.getId());
-			String objstr = objMapper.writeValueAsString(myTableModel);
-
-			logger.info(objstr);
-
-			Message me = new Message();
-			// Topic
-			me.setTopic("TopicTest");
-			// 标签
-			me.setTags("TagA");
-			// 设置key 多个用空格分开
-			me.setKeys("key1 key2");
-
-			me.putUserProperty("id", myTableModel.getId().toString());
-			// 内容
-			me.setBody(objstr.getBytes(RemotingHelper.DEFAULT_CHARSET));
-
-			TransactionSendResult tsr = mqProducer.producer.sendMessageInTransaction(me, mytablemodels);
-
-			logger.info(tsr.toString());
-		}
-	}
-
-	
 	/**
-	 *  这里可以显示提交事物 返回boolean
-	 * 一条一条插入只是为了展现事物的特性
-	 * 获取所有异常
+	 * 这里可以显示提交事物 返回boolean 一条一条插入只是为了展现事物的特性 获取所有异常 处理你的业务逻辑等等
 	 * 
 	 * @param mytablemodels
 	 * @return
 	 */
-	@Transactional(rollbackFor=Exception.class,timeout=60000)
-	public List<Integer> execMytableinsert2(List<MyTableModel> mytablemodels) {
-		
-		logger.info("开始执行数据库事物");
+	@Transactional(rollbackFor = Exception.class, timeout = 60000)
+	public List<Integer> execMytableinsert2(List<MyTableModel> mytablemodels, String msgid) {
+
+		// logger.info("开始执行数据库事物");
 		List<Integer> result = new ArrayList<Integer>();
 		for (MyTableModel myTableModel : mytablemodels) {
 			// 插入数据库
+			myTableModel.setMsgid(msgid);
 			mytable.insertmytable(myTableModel);
 			result.add(myTableModel.getId());
 		}
 
-		logger.info("结束执行数据库事物");
+		// logger.info("结束执行数据库事物");
 		return result;
 	}
 
@@ -92,5 +49,28 @@ public class MytableService {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 查询是否存在已经发送过的msgid消息
+	 * 
+	 * @param msgid
+	 * @return
+	 */
+	public boolean existMyTableModelByMsgid(String msgid) {
+		int count = mytable.selectMyTableModelByMsgid(msgid);
+		if (count > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public void insetmsg(MyTableModel mytablemodel) {
+		try {
+			mytable.insertmsgrecord(mytablemodel);
+
+		} catch (org.springframework.dao.DuplicateKeyException e) {
+			logger.error("主键冲突异常被捕获",e);
+		}
 	}
 }

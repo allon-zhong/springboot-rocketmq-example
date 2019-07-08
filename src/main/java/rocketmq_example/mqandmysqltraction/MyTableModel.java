@@ -15,7 +15,14 @@ public class MyTableModel implements Serializable {
 	private String column3;
 	private String column4;
 	private String column5;
+	private String msgid;
 	
+	public String getMsgid() {
+		return msgid;
+	}
+	public void setMsgid(String msgid) {
+		this.msgid = msgid;
+	}
 	public Integer getId() {
 		return id;
 	}
