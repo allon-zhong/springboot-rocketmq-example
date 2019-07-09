@@ -46,8 +46,12 @@ public class TransactionListenerImpl implements TransactionListener {
 		List<MyTableModel> mytablelist = (List<MyTableModel>) arg;
 
 		try {
+			
+			long start=System.currentTimeMillis();
 			//数据库事物执行时间不要超过mq回查时间 默认15分钟
 			mytableService.execMytableinsert2(mytablelist, msg.getTransactionId());
+			
+			logger.info("执行数据库事物耗时:{}",System.currentTimeMillis()-start);
 			lts = LocalTransactionState.COMMIT_MESSAGE;
 		} catch (Exception e) {
 			logger.error("数据库事务异常", e);
