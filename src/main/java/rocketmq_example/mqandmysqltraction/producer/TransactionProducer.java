@@ -23,8 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
-
-//@Component
+/**
+ * 生产者和消费者测试的时候记得注掉一中的一个以免观察不出效果
+ * 
+ */
+@Component
 public class TransactionProducer {
 	static Logger logger = LoggerFactory.getLogger(TransactionProducer.class);
 
