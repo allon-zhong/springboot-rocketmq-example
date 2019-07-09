@@ -28,7 +28,11 @@ import rocketmq_example.mqandmysqltraction.MyTableModel;
 import rocketmq_example.mqandmysqltraction.MytableService;
 
 
-
+/**
+ * 生产者和消费者测试的时候记得注掉一中的一个以免观察不出效果
+ * @author zyg
+ *
+ */
 @Component
 public class TransactionCustomer {
 	static Logger logger = LoggerFactory.getLogger(TransactionCustomer.class);
@@ -57,7 +61,7 @@ public class TransactionCustomer {
 
 		consumer.setNamesrvAddr("10.10.6.71:9876;10.10.6.72:9876");
 		consumer.setConsumeThreadMax(30);
-		consumer.setConsumeThreadMin(5);
+		consumer.setConsumeThreadMin(10);
 		consumer.setConsumeMessageBatchMaxSize(32);
 		consumer.setMaxReconsumeTimes(16);
 		consumer.setConsumeConcurrentlyMaxSpan(2000);
@@ -109,7 +113,9 @@ public class TransactionCustomer {
 						for (MyTableModel myTableModel : tmlist) {
 							myTableModel.setMsgid(me.getMsgId());
 							logger.info("msgid:{}",me.getMsgId());
+							long start=System.currentTimeMillis();
 							mytableService.insetmsg(myTableModel);
+							logger.info("保存一条数据耗时:{}",System.currentTimeMillis()-start);
 						}
 					} catch (IOException e) {
 						logger.error("消费mq异常",e);
