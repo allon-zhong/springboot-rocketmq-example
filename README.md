@@ -1,5 +1,5 @@
 # springboot-rocketmq-example
-对RocketMQ示例的编写，尤其是事物代码有所改变
+对RocketMQ4.4.0示例的编写，尤其是事物代码有所改变
 
 本项目包括 事物消息，顺序消息等消息发送
 
