@@ -29,6 +29,7 @@ public class Consumer {
 		consumer.setMaxReconsumeTimes(16);
 		consumer.setConsumeConcurrentlyMaxSpan(2000);
 		consumer.setPullInterval(0);
+		//consumer.setInstanceName(instanceName);
         /*
          * Specify name server addresses.
          * <p/>
